@@ -28,8 +28,13 @@ Route::group([
 });
 
 
-Route::middleware('jwt.auth')->group(function () {
-    Route::get('probando', function () {
-        return 'probando';
-    });
+// Route::middleware('jwt.auth')->group(function () {
+
+// });
+Route::get('probando', function () {
+    return response()->json([
+        'data' => [
+            'message' => 'Probando endpoint'
+        ]
+    ]);
 });
