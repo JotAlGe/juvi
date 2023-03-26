@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -28,5 +29,28 @@ class MessageTest extends TestCase
             ])
             ->assertCreated();
         // dd(JWTAuth::user()->id);
+    }
+
+    /**
+     * @test
+     */
+    public function a_user_can_update_a_message(): void
+    {
+        $user = User::factory()->createOne();
+        $message = Message::factory()->createOne();
+
+        $this->actingAs($user)
+            ->putJson(route('messages.update', $message), [
+                'title' => 'A title updated',
+                'body' => 'A description updated',
+                'user_id' => $user->id
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas('messages', [
+            'title' => 'A title updated',
+            'body' => 'A description updated',
+            'user_id' => $user->id
+        ]);
     }
 }

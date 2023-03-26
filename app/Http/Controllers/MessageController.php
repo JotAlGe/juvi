@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMessageRequest;
+use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
@@ -38,9 +39,13 @@ class MessageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateMessageRequest $request, Message $message)
     {
-        //
+        $this->authorize('update', $message);
+        $message->update($request->validated());
+        return response()->json([
+            'message' => '¡Message updated successfully!'
+        ], 201);
     }
 
     /**
