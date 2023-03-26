@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class MessagePolicy
@@ -35,9 +36,11 @@ class MessagePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Message $message): bool
+    public function update(User $user, Message $message)
     {
-        //
+        return $user->id === $message->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this message.');;
     }
 
     /**
