@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class StoreMessageRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return JWTAuth::check();
     }
 
     /**
@@ -22,7 +23,9 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['required', 'string'],
+            'body' => ['required', 'string'],
+            'user_id' => ['required', 'integer'],
         ];
     }
 }

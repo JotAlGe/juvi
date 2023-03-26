@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,13 +29,6 @@ Route::group([
 });
 
 
-// Route::middleware('jwt.auth')->group(function () {
-
-// });
-Route::get('probando', function () {
-    return response()->json([
-        'data' => [
-            'message' => 'Probando endpoint'
-        ]
-    ]);
+Route::middleware('jwt.auth')->group(function () {
+    Route::apiResource('messages', MessageController::class);
 });
