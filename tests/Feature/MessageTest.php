@@ -88,4 +88,53 @@ class MessageTest extends TestCase
             ->getJson(route('messages.index'))
             ->assertStatus(403);
     }
+
+    /**
+     * @test
+     */
+    public function it_can_delete_a_message_by_admin(): void
+    {
+        $user = User::factory()->createOne([
+            'role' => 'admin'
+        ]);
+        $message = Message::factory()->createOne();
+
+        // dd($user->role);
+        $this->actingAs($user)
+            ->deleteJson(route('messages.destroy', $message))
+            ->assertStatus(204);
+
+        $this->assertSoftDeleted('messages', [
+            'title' => $message->title,
+            'body' => $message->body,
+            'user_id' => $message->user_id
+        ]);
+
+        $this->assertDatabaseHas('messages', [
+            'title' => $message->title,
+            'body' => $message->body,
+            'user_id' => $message->user_id
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_cannot_delete_message_by_user(): void
+    {
+        $user = User::factory()->createOne([
+            'role' => 'user'
+        ]);
+        $message = Message::factory()->createOne();
+
+        $this->actingAs($user)
+            ->deleteJson(route('messages.destroy', $message))
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('messages', [
+            'title' => $message->title,
+            'body' => $message->body,
+            'user_id' => $message->user_id
+        ]);
+    }
 }

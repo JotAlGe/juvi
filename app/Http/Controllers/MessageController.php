@@ -52,8 +52,12 @@ class MessageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Message $message)
     {
-        //
+        $this->authorize('delete', $message);
+        $message->delete();
+        return response()->json([
+            'message' => '¡Mensaje borrado!'
+        ], 204);
     }
 }
