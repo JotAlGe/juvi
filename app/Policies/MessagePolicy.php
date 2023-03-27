@@ -36,19 +36,21 @@ class MessagePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Message $message)
+    public function update(User $user, Message $message): Response
     {
         return $user->id === $message->user_id
             ? Response::allow()
-            : Response::deny('You do not own this message.');;
+            : Response::deny('No eres el dueño del mensaje.');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Message $message): bool
+    public function delete(User $user): Response
     {
-        //
+        return $user->role === 'admin'
+            ? Response::allow()
+            : Response::deny('¡Tienes que ser administrador para eliminar un mensaje!');
     }
 
     /**
