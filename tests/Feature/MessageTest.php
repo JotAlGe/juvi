@@ -53,4 +53,39 @@ class MessageTest extends TestCase
             'user_id' => $user->id
         ]);
     }
+
+    /**
+     * @test
+     */
+    public function it_can_get_all_messages_by_admin(): void
+    {
+        $user = User::factory()->createOne([
+            'role' => 'admin'
+        ]);
+        $messages = Message::factory()->times(2)->create();
+
+        $this->actingAs($user)
+            ->getJson(route('messages.index'))
+            ->assertSuccessful()
+            ->assertSee([
+                $messages[0]->title,
+                $messages[0]->body
+            ]);
+
+        $this->assertDatabaseCount('messages', 2);
+    }
+
+    /**
+     * @test
+     */
+    public function it_cannot_get_all_messages_by_user(): void
+    {
+        $user = User::factory()->createOne([
+            'role' => 'user'
+        ]);
+
+        $this->actingAs($user)
+            ->getJson(route('messages.index'))
+            ->assertStatus(403);
+    }
 }

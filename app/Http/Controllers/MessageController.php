@@ -14,7 +14,8 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Message::class);
+        return Message::with('user')->get();
     }
 
     /**
