@@ -5,47 +5,34 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Message;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): Response
-    {
-        //
+        $this->authorize('viewAny', Message::class);
+        return Message::with('user')->get();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMessageRequest $request): RedirectResponse
+    public function store(StoreMessageRequest $request)
     {
-        //
+        Message::create($request->validated());
+        return response()->json([
+            'message' => '¡Message sended successfully!'
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Message $message): Response
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Message $message): Response
+    public function show(string $id)
     {
         //
     }
@@ -53,16 +40,24 @@ class MessageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMessageRequest $request, Message $message): RedirectResponse
+    public function update(UpdateMessageRequest $request, Message $message)
     {
-        //
+        $this->authorize('update', $message);
+        $message->update($request->validated());
+        return response()->json([
+            'message' => '¡Message updated successfully!'
+        ], 201);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Message $message): RedirectResponse
+    public function destroy(Message $message)
     {
-        //
+        $this->authorize('delete', $message);
+        $message->delete();
+        return response()->json([
+            'message' => '¡Mensaje borrado!'
+        ], 204);
     }
 }
